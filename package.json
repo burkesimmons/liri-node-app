@@ -1,0 +1,22 @@
+{
+  "name": "liri-node-app",
+  "version": "0.0.1",
+  "description": "LIRI Bot",
+  "main": "liri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burkesimmons/liri-node-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/burkesimmons/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/burkesimmons/liri-node-app#readme",
+  "dependencies": {
+    "twitter": "^1.7.1"
+  }
+}
