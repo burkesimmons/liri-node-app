@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/burkesimmons/liri-node-app#readme",
   "dependencies": {
+    "node-spotify-api": "^1.0.7",
+    "omdb": "^0.8.0",
     "twitter": "^1.7.1"
   }
 }
