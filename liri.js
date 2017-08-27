@@ -2,82 +2,118 @@ var Twitter = require('twitter');
  
 var twitterKeys = require('./keys.js');
 
-// console.log(twitterKeys.twitterKeys);
-
 var client = new Twitter(twitterKeys.twitterKeys);
 
-// var client = new Twitter({
-//   consumer_key: 'aYIw1qogFcAW1T1CAzP50D4Mc',
-//   consumer_secret: 'Nnx9Qtq3yDmMlm8W45shAykKb0ekDrf8cGQXPra0VARGZAPXEZ',
-//   access_token_key: '899010833543421952-7aL1GvKIBO8fjFhju8zgXVus4kmQd2E',
-//   access_token_secret: 'gn45J0XezNk1eg5Fqgd7P81248DfpkINwMBnvw1Y2U2tx'
-// });
- 
-var params = {screen_name: 'burkemsimmons', count: '20'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-  	for (var i = 0; i < tweets.length; i++) {
-  		console.log(tweets[i].created_at);
-  		console.log(tweets[i].text);
-  		console.log('=====================');
-  	}
-    // console.log(tweets[0].created_at);
-    // console.log(tweets[0].text);
-    // console.log(tweets);
-  }
-});
+var grabTweets = function(){
 
-// var action = process.argv[2];
+	var params = {screen_name: 'burkemsimmons', count: '20'};
+	
+	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+		if (!error) {
+			for (var i = 0; i < tweets.length; i++) {
+				console.log(tweets[i].created_at);
+				console.log(tweets[i].text);
+				console.log('=====================');
+			}
+		}
+	});
+};
 
-// console.log('client.twitterKeys', client.twitterKeys);	
+var Spotify = require('node-spotify-api');
 
-// function topTweets(){
-// 	var grabTwenty = new Twitter(client.twitterKeys);
-// 	grabTwenty.get('direct_messages/sent', function(error, tweets, response) {
-//    		console.log(tweets);
-//    		// console.log(response);
-// 	});
-// };
+var spotify = new Spotify({
+		id: '6a887795fc8045b68d94776fa8afdf5a',
+		secret: '7baa7fd87b654c83a98325d930fa9195'
+	});
 
-// topTweets();
+var song = '';
+song = process.argv[3];
 
-// var Spotify = require('node-spotify-api');
+var grabSpotify = function(){
+	if(song == null){
+		song = 'The Sign Ace of Base';
+		spotifyMe();
+	} else {
+		spotifyMe();
+	};
+};
 
-// var spotify = new Spotify({
-// 	  id: '6a887795fc8045b68d94776fa8afdf5a',
-// 	  secret: '7baa7fd87b654c83a98325d930fa9195'
-// 	});
+var spotifyMe = function(){
+	spotify.search({ type: 'track', query: song }, function(err, data) {
+		if (err) {
+		return console.log('Error occurred: ' + err);
+		}
 
-// function grabSpotify(){
+	var currentSong = data.tracks.items[0];
 
-// 	spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-// 	  if (err) {
-// 	    return console.log('Error occurred: ' + err);
-// 	  }
-	 
-// 	console.log(data); 
-// 	console.log(data.tracks.items[0]);
-// 	});
-// };
+	console.log("Artist: " + currentSong.artists[0].name);
+	console.log("Song title: " + currentSong.name);
+	console.log("Url: " + currentSong.external_urls.spotify);
+	console.log("Album Name: " + currentSong.album.name);
+	});
+}
 
-// 	// spotify
-// 	//   .search({ type: 'track', query: 'All the Small Things' })
-// 	//   .then(function(response) {
-// 	//     console.log(response);
-// 	//   })	
-// 	//   .catch(function(err) {
-// 	//     console.log(err);
-// 	//   });
-// };
+var request = require("request");
 
-// grabSpotify();
+// Create an empty variable for holding the movie name
+var movieName = '';
+movieName = process.argv[3]
 
-// if(action === 'my-tweets'){
-// 	tweets();
-// } else if(action === 'spotify-this-song'){
-// 	grabSpotify();
-// } else if(action === 'movie-this'){
-// 	movie();
-// } else(action === 'do-what-it-says'){
-// 	do();
-// };
+var grabOMDB = function() {
+	if(movieName == null){
+		movieName = 'Mr. Nobody';
+		movieMe();
+	} else {
+		movieMe();
+	}
+};
+
+var movieMe = function(){
+	var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
+
+	request(queryUrl, function(error, response, body) {
+
+	  // If the request is successful
+		if (!error && response.statusCode === 200) {
+
+			console.log("Title: " + JSON.parse(body).Title);
+			console.log("Release Year: " + JSON.parse(body).Year);
+			console.log(JSON.parse(body).Ratings[0].Source + " Rating: " + JSON.parse(body).Ratings[0].Value);
+			console.log(JSON.parse(body).Ratings[1].Source + " Rating: " + JSON.parse(body).Ratings[1].Value);
+			console.log("Country: " + JSON.parse(body).Country);
+			console.log("Language: " + JSON.parse(body).Language);
+			console.log("Plot: " + JSON.parse(body).Plot);
+			console.log("Actors: " + JSON.parse(body).Actors);
+		}
+	});
+}
+
+// fs is a core Node package for reading and writing files
+var fs = require("fs");
+
+var doWhat = function(){
+	fs.readFile("random.txt", "utf8", function(error, data) {
+
+		if (error) {
+		return console.log(error);
+		}
+
+		var dataArr = data.split(",");
+		song = dataArr[1];
+
+		grabSpotify();
+
+	});
+};
+
+var action = process.argv[2];
+
+if(action === 'my-tweets'){
+	grabTweets();
+} else if(action === 'spotify-this-song'){
+	grabSpotify();
+} else if(action === 'movie-this'){
+	grabOMDB();
+} else if(action === 'do-what-it-says'){
+	doWhat();
+};
